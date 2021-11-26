@@ -8,21 +8,32 @@ export default function GameBoard() {
     let pairCount = 0;
     let cardCompArr = [];
 
-    const [state, setState] = useState([]);
-    const [pair, setPair] = useState({card1: "", card2: ""});
+    const [stateDeck, setStateDeck] = useState([]);
+    const [cardCheck, setCardCheck] = useState("");
+    const [pair, setPair] = useState(() => {return {card1: "", card2: ""}});
 
-    useEffect(() => {
-        if (pairCount === 2){
+    useEffect(async () => {
+        /* if (pairCount === 2){
             checkPair();
             pairCount = 0;
             return;
         }
-        pairCount++;
+        pairCount++; */
+        if (pair.card1 === ""){
+            await setPair(prev => { return {...prev, card1: `${cardCheck}`}});
+        } else if (pair.card2 === ""){
+            setPair(prev => { return {...prev, card2: `${cardCheck}`}});
+        }
+        
+        console.log(cardCheck);
+    }, [cardCheck])
+
+    useEffect(() => {
         console.log(pair);
     }, [pair])
 
     function checkPair() {
-        if (pair[0] === pair[1]){
+        if (cardCheck[0] === cardCheck[1]){
             //set cardComp to locked
         } else {
             //flip cardComps back
@@ -39,7 +50,7 @@ export default function GameBoard() {
             const data2 = await res2.json();
             myDeck[i] = data2;
         }
-        setState(myDeck);
+        setStateDeck(myDeck);
     }, [])
 
     function see(){
@@ -50,9 +61,9 @@ export default function GameBoard() {
     return (
         <div className="grid">
             <button onClick={see}>Check</button>
-            {state.map((card) => {
+            {stateDeck.map((card) => {
                 return (
-                    <CardComp pairCheck={pair => setPair(prev => {return {...prev, pair}})} key={card.cards[0].code} val={card.cards[0].code} img={card.cards[0].image} />
+                    <CardComp getCard={cardX => setCardCheck(cardX)} key={card.cards[0].code} val={card.cards[0].code} img={card.cards[0].image} />
                 );
             })}
         </div>

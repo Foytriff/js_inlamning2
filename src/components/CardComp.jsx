@@ -3,7 +3,7 @@ import './GameBoardcss.css'
 
     const cardBackURL = "https://cdn.hearthstonetopdecks.com/wp-content/uploads/2014/06/card-back-default.png";
 
-export default function CardComp({pairCheck, val, img}) {
+export default function CardComp({getCard, val, img}) {
 
     const [cardDetails, setCardDetails] = useState({ value: val, image: cardBackURL, locked: false});
     
@@ -14,7 +14,7 @@ export default function CardComp({pairCheck, val, img}) {
             return {...prev, image: img}
         })
         console.log(img)
-        pairCheck(cardDetails.value);
+        getCard(cardDetails.value);
     }
 
 
