@@ -3,18 +3,27 @@ import './GameBoardcss.css'
 
     const cardBackURL = "https://cdn.hearthstonetopdecks.com/wp-content/uploads/2014/06/card-back-default.png";
 
-export default function CardComp({val, img}) {
+export default function CardComp({pairCheck, val, img}) {
 
-    const [props, setProps] = useState({ value: val, image: cardBackURL});
+    const [cardDetails, setCardDetails] = useState({ value: val, image: cardBackURL, locked: false});
     
+
+
     function showCard() {
-        setProps(prev =>{
+        setCardDetails(prev =>{
             return {...prev, image: img}
         })
         console.log(img)
+        pairCheck(cardDetails.value);
     }
 
+
     return (
-            <button onClick={showCard}><img className="grid-card" src={`${props.image}`} /></button>
+            <button onClick={ /* () => { cardDetails.locked ? 
+                null
+                :  */
+                showCard/* , fromChild(cardDetails.value) }*/}>
+                <img className="grid-card" src={`${cardDetails.image}`} />
+            </button>
     )
 }
