@@ -9,9 +9,7 @@ function App() {
     //Radda upp knappar och lägg till kort från kortarrayen
   return (
     <>
-      <div>
         <GameBoard />
-      </div>
     </>
   );
 }
