@@ -9,78 +9,87 @@ export default function GameBoard() {
     let myDeck = [];
 
     const [stateDeck, setStateDeck] = useState([]);
-    const [cardCheck, setCardCheck] = useState("");
-    const [pair, setPair] = useState(() => {return {card1: "", card2: ""}});
+    const [pair, setPair] = useState(["", ""]);
 
-    useEffect(async () => {
-        if (pair.card1 === ""){
-            await setPair(prev => { return {...prev, card1: `${cardCheck}`}});
-        } else if (pair.card2 === ""){
-            setPair(prev => { return {...prev, card2: `${cardCheck}`}});
-        }   
-        console.log(cardCheck);
-    }, [cardCheck])
+
+    function see(){
+        console.log(stateDeck);
+        console.log(...pair);
+        console.log(pair)
+    }
+
+    function addToPair(cardFromChild){
+        if (pair){
+            if(pair[0] === ""){
+                setPair( prev => {
+                    prev[0] = cardFromChild;
+                    console.log("card 1 set")
+                    return prev;
+                })
+            } else if (pair[1] === ""){
+                setPair( prev => {
+                    prev[1] = cardFromChild;
+                    console.log("card 2 set")
+                    return prev;
+                })
+            }
+        }
+        console.log({pair});
+    }
 
     useEffect(() => {
-        console.log(pair);
-        if (pair.card1 !== '' && pair.card2 !== ''){
-            checkPair();
+        console.log("useEffect pair run")
+        if(pair[0] !== "" && pair[1] !== ""){
+            if (pair[0] === pair[1]){
+                console.log("going into lockPair")
+                lockPair();
+            } else {
+                console.log("going into reset")
+                reset();
+            }
         }
     }, [pair])
 
-    function checkPair() {
-            if (pair.card1 === pair.card2){
-                setStateDeck(prev => {
-                    prev.forEach(el => {
-                        if (el.cards[0].image === pair.card1){
-                            el.locked = true;
-                        }
-                    })
-
-                    return {...prev};
-                })
-            } else {
-                
-            }
-        console.log("inside checkPair")
+    function reset(){
+        console.log("reset active")
+        setStateDeck(stateDeck);
     }
+
+    function lockPair(){
+        console.log("lockPair active")
+        setStateDeck(prev =>{
+            stateDeck.forEach(cardObj => {
+                if (pair[0] === cardObj.cards[0].image){
+                    cardObj.locked = true;
+                }
+            })
+            return prev;
+        })
+    }
+
 
     useEffect(async () => {
         const res = await fetch("https://deckofcardsapi.com/api/deck/new/shuffle/?deck_count=1");
         const data =  await res.json();
-        
         for (let i = 0; i < cardAmount; i++){
             const res2 = await fetch(`https://deckofcardsapi.com/api/deck/${data.deck_id}/draw/?count=1`);
             const data2 = await res2.json();
+            myDeck[i] = data2;
+            myDeck[i].locked = false;
+            i++;
             myDeck[i] = data2;
             myDeck[i].locked = false;
         }
         setStateDeck(myDeck);
     }, [])
 
-    function see(){
-        console.log(stateDeck) //Varför
-        
-        setStateDeck(prev => {
-            let temp = prev;
-
-            console.log(prev) //Är dessa
-            
-            temp[0].locked = true;
-
-            console.log(temp); //samma???
-
-            return temp;
-        })
-    }
-
-    
     return (
         <div className="grid">
-            <button onClick={see}>Check</button>
-            {stateDeck && stateDeck.map((card) => {
+            <button onClick={see}>click</button>
+            {stateDeck && stateDeck.map((card, index) => {
+                console.log("run")
                 return (
-                    <CardComp getCard={cardX => setCardCheck(cardX)} key={card.cards[0].code} imgSrc={card.cards[0].image}/>
+                    <CardComp key={index} addToPair={cardX => addToPair(cardX)} imgSrc={card.cards[0].image} lock={card.locked} />
                 );
             })}
         </div>
