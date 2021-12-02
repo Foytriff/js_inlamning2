@@ -5,16 +5,13 @@ const cardBackURL = "https://cdn.hearthstonetopdecks.com/wp-content/uploads/2014
 
 export default function CardComp({addToPair, imgSrc, lock}) {
 
-    const [cardDetails, setCardDetails] = useState(cardBackURL);
-
     function showCard() {
-        setCardDetails(imgSrc);
         addToPair(imgSrc);
     }
 
     return (
             <button onClick={ showCard }>
-                <img className="grid-card" src={`${cardDetails}`} />
+                <img className="grid-card" src={lock === 0 ? cardBackURL : imgSrc} />
             </button>
     )
 }

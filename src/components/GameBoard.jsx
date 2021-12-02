@@ -24,13 +24,29 @@ export default function GameBoard() {
                 setPair( prev => {
                     prev[0] = cardFromChild;
                     console.log("card 1 set")
-                    return prev;
+                    return [...prev];
+                })
+                setStateDeck(prev =>{
+                    stateDeck.forEach(cardObj => {
+                        if (pair[0] === cardObj.cards[0].image){
+                            cardObj.locked = 1;
+                        }
+                    })
+                    return [...prev];
                 })
             } else if (pair[1] === ""){
                 setPair( prev => {
                     prev[1] = cardFromChild;
                     console.log("card 2 set")
-                    return prev;
+                    return [...prev];
+                })
+                setStateDeck(prev =>{
+                    stateDeck.forEach(cardObj => {
+                        if (pair[0] === cardObj.cards[0].image){
+                            cardObj.locked = 1;
+                        }
+                    })
+                    return [...prev];
                 })
             }
         }
@@ -53,6 +69,7 @@ export default function GameBoard() {
     function reset(){
         console.log("reset active")
         setStateDeck(stateDeck);
+        setPair(["", ""]);
     }
 
     function lockPair(){
@@ -60,11 +77,12 @@ export default function GameBoard() {
         setStateDeck(prev =>{
             stateDeck.forEach(cardObj => {
                 if (pair[0] === cardObj.cards[0].image){
-                    cardObj.locked = true;
+                    cardObj.locked = 2;
                 }
             })
-            return prev;
+            return [...prev];
         })
+        setPair(["", ""]);
     }
 
 
@@ -75,10 +93,10 @@ export default function GameBoard() {
             const res2 = await fetch(`https://deckofcardsapi.com/api/deck/${data.deck_id}/draw/?count=1`);
             const data2 = await res2.json();
             myDeck[i] = data2;
-            myDeck[i].locked = false;
+            myDeck[i].locked = 0;
             i++;
             myDeck[i] = data2;
-            myDeck[i].locked = false;
+            myDeck[i].locked = 0;
         }
         setStateDeck(myDeck);
     }, [])
