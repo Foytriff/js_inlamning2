@@ -50,11 +50,6 @@ export default function GameBoard() {
                 })
             }
         }
-        console.log({pair});
-    }
-
-    function cardGetID(cardID){
-        
     }
 
     useEffect(() => {
@@ -80,7 +75,7 @@ export default function GameBoard() {
         console.log("lockPair active")
         setStateDeck(prev =>{
             stateDeck.forEach(cardObj => {
-                if (pair[0] === cardObj.cards[0].image){
+                if (pair[0] === cardObj.id || pair[1] === cardObj.id){
                     cardObj.locked = 2;
                 }
             })
@@ -91,40 +86,40 @@ export default function GameBoard() {
 
 
     useEffect(async () => {
+        console.log(myDeck);
         const res = await fetch("https://deckofcardsapi.com/api/deck/new/shuffle/?deck_count=1");
         const data =  await res.json();
-        for (let i = 0; i < cardAmount; i += 2){
+        for (let i = 0; i < cardAmount/2; i++){
 
             const res2 = await fetch(`https://deckofcardsapi.com/api/deck/${data.deck_id}/draw/?count=1`);
             const data2 = await res2.json();
-            for (let j = i; j < (i + 2); j++){
-                myDeck.push(data2);
-            }
+            myDeck[i] = data2;
+            myDeck[i].locked = 0;
+            myDeck[i].id = i;
         }
 
-        myDeck.forEach((item, index) => {
+        myDeck.push(...myDeck);
+
+        myDeck = myDeck.map((item, index) => {
             item.id = index;
-            console.log(item);
+            console.log(myDeck);
+            return {...item}
         })
 
-        console.log(myDeck);
+
 
         setStateDeck(myDeck);
-        setStateDeck(prev => {
-            for (let i = 0; i < stateDeck.length; i += 2){
-                prev[i].id -= 1;
-            }
-            return [...prev];
-        });
+        console.log(stateDeck);
     }, [])
 
     return (
         <div className="grid">
-            <button onClick={see}>click</button>
+            <button onClick={see}>click</button> 
             {stateDeck && stateDeck.map((card, index) => {
-                console.log("run")
+                console.log("card id from mapfunc: ")
+                console.log(card.id)
                 return (
-                    <CardComp key={index} id={index} addToPair={cardX => addToPair(cardX)} imgSrc={card.cards[0].image} lock={card.locked} />
+                    <CardComp key={index} id={card.id} addToPair={cardX => addToPair(cardX)} imgSrc={card.cards[0].image} lock={card.locked} />
                 );
             })}
         </div>
