@@ -3,10 +3,10 @@ import './GameBoardcss.css'
 
 const cardBackURL = "https://cdn.hearthstonetopdecks.com/wp-content/uploads/2014/06/card-back-default.png";
 
-export default function CardComp({addToPair, imgSrc, lock}) {
+export default function CardComp({addToPair, imgSrc, id, lock}) {
 
     function showCard() {
-        addToPair(imgSrc);
+        addToPair(id);
     }
 
     return (
