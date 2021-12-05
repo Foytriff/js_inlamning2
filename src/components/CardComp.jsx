@@ -6,7 +6,9 @@ const cardBackURL = "https://cdn.hearthstonetopdecks.com/wp-content/uploads/2014
 export default function CardComp({addToPair, imgSrc, id, lock}) {
 
     function showCard() {
-        addToPair(id);
+        if(lock !== 2){
+            addToPair(id);
+        }
     }
 
     return (

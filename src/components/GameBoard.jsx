@@ -26,48 +26,61 @@ export default function GameBoard() {
                     console.log("card 1 set")
                     return [...prev];
                 })
-                setStateDeck(prev =>{
-                    stateDeck.forEach(cardObj => {
-                        if (pair[0] === cardIDFromChild){
-                            cardObj.locked = 1;
-                        }
-                    })
-                    return [...prev];
-                })
+                
             } else if (pair[1] === ""){
                 setPair( prev => {
                     prev[1] = cardIDFromChild;
                     console.log("card 2 set")
                     return [...prev];
                 })
-                setStateDeck(prev =>{
-                    stateDeck.forEach(cardObj => {
-                        if (pair[0] === cardIDFromChild){
-                            cardObj.locked = 1;
-                        }
-                    })
-                    return [...prev];
-                })
             }
+            stateDeck.forEach(card =>{
+                if(card.id === cardIDFromChild){
+                    card.locked = 1;
+                }
+            })
         }
     }
 
     useEffect(() => {
         console.log("useEffect pair run")
+        console.log(pair);
         if(pair[0] !== "" && pair[1] !== ""){
-            if (pair[0] === pair[1]){
+            let imgCard1;
+            let imgCard2;
+            for (let i = 0; i < cardAmount; i++){
+                if (stateDeck[i].id === pair[0]){
+                    imgCard1 = stateDeck[i].cards[0].image;
+                    break;
+                }
+            }
+
+            for (let i = 0; i < cardAmount; i++){
+                if (stateDeck[i].id === pair[1]){
+                    imgCard2 = stateDeck[i].cards[0].image;
+                    break;
+                }
+            }
+
+            if (imgCard1 === imgCard2){
                 console.log("going into lockPair")
                 lockPair();
             } else {
                 console.log("going into reset")
-                reset();
+                setTimeout(() => {
+                    reset();
+                }, 2000);
             }
         }
     }, [pair])
 
     function reset(){
         console.log("reset active")
-        setStateDeck(stateDeck);
+        stateDeck.forEach(card => {
+            if(card.id === pair[0] || card.id === pair[1]){
+                card.locked = 0;
+            }
+        })
         setPair(["", ""]);
     }
 
@@ -86,7 +99,6 @@ export default function GameBoard() {
 
 
     useEffect(async () => {
-        console.log(myDeck);
         const res = await fetch("https://deckofcardsapi.com/api/deck/new/shuffle/?deck_count=1");
         const data =  await res.json();
         for (let i = 0; i < cardAmount/2; i++){
@@ -102,22 +114,15 @@ export default function GameBoard() {
 
         myDeck = myDeck.map((item, index) => {
             item.id = index;
-            console.log(myDeck);
             return {...item}
         })
-
-
-
         setStateDeck(myDeck);
-        console.log(stateDeck);
     }, [])
 
     return (
         <div className="grid">
             <button onClick={see}>click</button> 
             {stateDeck && stateDeck.map((card, index) => {
-                console.log("card id from mapfunc: ")
-                console.log(card.id)
                 return (
                     <CardComp key={index} id={card.id} addToPair={cardX => addToPair(cardX)} imgSrc={card.cards[0].image} lock={card.locked} />
                 );
