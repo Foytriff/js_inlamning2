@@ -11,11 +11,14 @@ export default function GameBoard() {
     const [stateDeck, setStateDeck] = useState([]);
     const [pair, setPair] = useState(["", ""]);
 
-
-    function see(){
-        console.log(stateDeck);
-        console.log(...pair);
-        console.log(pair)
+    //Durstenfeld from the internet
+    function shuffleArray(array) {
+        for (var i = array.length - 1; i > 0; i--) {
+            var j = Math.floor(Math.random() * (i + 1));
+            var temp = array[i];
+            array[i] = array[j];
+            array[j] = temp;
+        }
     }
 
     function addToPair(cardIDFromChild){
@@ -116,12 +119,12 @@ export default function GameBoard() {
             item.id = index;
             return {...item}
         })
+        shuffleArray(myDeck);
         setStateDeck(myDeck);
     }, [])
 
     return (
         <div className="grid">
-            <button onClick={see}>click</button> 
             {stateDeck && stateDeck.map((card, index) => {
                 return (
                     <CardComp key={index} id={card.id} addToPair={cardX => addToPair(cardX)} imgSrc={card.cards[0].image} lock={card.locked} />
